@@ -1,0 +1,70 @@
+CREATE DATABASE vestackoplaninarenje;
+GO
+
+USE vestackoplaninarenje;
+GO
+
+-- ======================
+-- Admin
+-- ======================
+CREATE TABLE Admin (
+    IDAdmin INT IDENTITY(1,1) PRIMARY KEY,
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL
+);
+GO
+
+INSERT INTO Admin (KorisnickoIme, Sifra)
+VALUES ('admin', 'admin123'),
+       ('administrator', 'admin2024');
+GO
+
+-- ======================
+-- Korisnik
+-- ======================
+CREATE TABLE Korisnik (
+    IDKorisnik INT IDENTITY(1,1) PRIMARY KEY,
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M','Ž')),
+    BrojTelefona NVARCHAR(20) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL,
+    DatumRodjenja DATE NOT NULL
+);
+GO
+
+-- ======================
+-- Trener
+-- ======================
+CREATE TABLE Trener (
+    IDTrener INT IDENTITY(1,1) PRIMARY KEY,
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M','Ž')),
+    BrojTelefona NVARCHAR(20) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL,
+    Sertifikati NVARCHAR(255),
+    Satnica DECIMAL(10,2) NOT NULL
+);
+GO
+
+-- ======================
+-- Termin
+-- ======================
+CREATE TABLE Termin (
+    IDTermin INT IDENTITY(1,1) PRIMARY KEY,
+    KorisnikID INT NOT NULL,
+    TrenerID INT NOT NULL,
+    DatumVreme DATETIME NOT NULL,
+    TrajanjeSati DECIMAL(3,1) NOT NULL,
+    Ruta NVARCHAR(100) NOT NULL CHECK (Ruta IN ('Jug','Sever')),
+    Tezina NVARCHAR(10),
+    Cena DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (KorisnikID) REFERENCES Korisnik(IDKorisnik) ON DELETE CASCADE,
+    FOREIGN KEY (TrenerID) REFERENCES Trener(IDTrener) ON DELETE CASCADE
+);
+GO
