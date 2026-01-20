@@ -1,70 +1,233 @@
+-- =============================================
+-- KREIRANJE BAZE PODATAKA
+-- =============================================
 CREATE DATABASE vestackoplaninarenje;
 GO
 
 USE vestackoplaninarenje;
 GO
 
--- ======================
--- Admin
--- ======================
+-- =============================================
+-- Tabela Admin
+-- =============================================
 CREATE TABLE Admin (
-    IDAdmin INT IDENTITY(1,1) PRIMARY KEY,
+    IDAdmin INT PRIMARY KEY IDENTITY(1,1),
     KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
     Sifra NVARCHAR(100) NOT NULL
 );
 GO
 
+-- Test admin nalozi
 INSERT INTO Admin (KorisnickoIme, Sifra)
-VALUES ('admin', 'admin123'),
-       ('administrator', 'admin2024');
+VALUES 
+('admin', 'admin123'),
+('administrator', 'admin2024');
 GO
 
--- ======================
--- Korisnik
--- ======================
+-- =============================================
+-- Procedura: Provera prijave admina
+-- =============================================
+CREATE PROCEDURE dbo.PostojiAdminPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Admin
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END;
+GO
+
+
+
+USE vestackoplaninarenje;
+GO
+
+-- =============================================
+-- Tabela Korisnik
+-- =============================================
 CREATE TABLE Korisnik (
-    IDKorisnik INT IDENTITY(1,1) PRIMARY KEY,
+    IDKorisnik INT PRIMARY KEY IDENTITY(1,1),
     Ime NVARCHAR(50) NOT NULL,
     Prezime NVARCHAR(50) NOT NULL,
-    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M','Ž')),
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M', 'Ž')),
     BrojTelefona NVARCHAR(20) NOT NULL,
     Email NVARCHAR(100) NOT NULL UNIQUE,
     KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
     Sifra NVARCHAR(100) NOT NULL,
     DatumRodjenja DATE NOT NULL
 );
-GO
 
--- ======================
--- Trener
--- ======================
+-- =============================================
+-- Tabela Trener
+-- =============================================
 CREATE TABLE Trener (
-    IDTrener INT IDENTITY(1,1) PRIMARY KEY,
+    IDTrener INT PRIMARY KEY IDENTITY(1,1),
     Ime NVARCHAR(50) NOT NULL,
     Prezime NVARCHAR(50) NOT NULL,
-    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M','Ž')),
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M', 'Ž')),
     BrojTelefona NVARCHAR(20) NOT NULL,
     Email NVARCHAR(100) NOT NULL UNIQUE,
     KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
     Sifra NVARCHAR(100) NOT NULL,
     Sertifikati NVARCHAR(255),
-    Satnica DECIMAL(10,2) NOT NULL
+    Satnica DECIMAL(10, 2) NOT NULL
 );
-GO
 
--- ======================
--- Termin
--- ======================
+-- =============================================
+-- Tabela Termin
+-- =============================================
 CREATE TABLE Termin (
-    IDTermin INT IDENTITY(1,1) PRIMARY KEY,
+    IDTermin INT PRIMARY KEY IDENTITY(1,1),
     KorisnikID INT NOT NULL,
     TrenerID INT NOT NULL,
     DatumVreme DATETIME NOT NULL,
-    TrajanjeSati DECIMAL(3,1) NOT NULL,
-    Ruta NVARCHAR(100) NOT NULL CHECK (Ruta IN ('Jug','Sever')),
+    TrajanjeSati DECIMAL(3, 1) NOT NULL,
+    Ruta NVARCHAR(100) NOT NULL CHECK (Ruta IN ('Jug', 'Sever')),
     Tezina NVARCHAR(10),
-    Cena DECIMAL(10,2) NOT NULL,
+    Cena DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (KorisnikID) REFERENCES Korisnik(IDKorisnik) ON DELETE CASCADE,
     FOREIGN KEY (TrenerID) REFERENCES Trener(IDTrener) ON DELETE CASCADE
 );
+GO
+
+-- =============================================
+-- SVI POGLEDI (VIEW)
+-- =============================================
+
+CREATE VIEW PregledKorisnika AS
+SELECT
+    IDKorisnik,
+    Ime,
+    Prezime,
+    Pol,
+    BrojTelefona,
+    Email,
+    KorisnickoIme,
+    DatumRodjenja,
+    YEAR(GETDATE()) - YEAR(DatumRodjenja) AS Starost
+FROM Korisnik;
+GO
+
+CREATE VIEW PregledTrenera AS
+SELECT
+    IDTrener,
+    Ime,
+    Prezime,
+    Pol,
+    BrojTelefona,
+    Email,
+    KorisnickoIme,
+    Sertifikati,
+    Satnica
+FROM Trener;
+GO
+
+CREATE VIEW vw_TerminiDetalji AS
+SELECT
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena,
+    k.IDKorisnik,
+    k.Ime AS KorisnikIme,
+    k.Prezime AS KorisnikPrezime,
+    k.BrojTelefona AS KorisnikTelefon,
+    k.Email AS KorisnikEmail,
+    k.KorisnickoIme AS KorisnikKorisnickoIme,
+    tr.IDTrener,
+    tr.Ime AS TrenerIme,
+    tr.Prezime AS TrenerPrezime,
+    tr.BrojTelefona AS TrenerTelefon,
+    tr.Email AS TrenerEmail,
+    tr.KorisnickoIme AS TrenerKorisnickoIme,
+    tr.Satnica AS TrenerSatnica
+FROM Termin t
+INNER JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik
+INNER JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+CREATE VIEW vw_KorisnikTermini AS
+SELECT
+    k.IDKorisnik,
+    k.Ime,
+    k.Prezime,
+    k.Email,
+    k.KorisnickoIme,
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena,
+    CONCAT(tr.Ime, ' ', tr.Prezime) AS Trener
+FROM Korisnik k
+LEFT JOIN Termin t ON k.IDKorisnik = t.KorisnikID
+LEFT JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+CREATE VIEW vw_TrenerRaspored AS
+SELECT
+    tr.IDTrener,
+    tr.Ime AS TrenerIme,
+    tr.Prezime AS TrenerPrezime,
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    CONCAT(k.Ime, ' ', k.Prezime) AS Korisnik,
+    k.BrojTelefona AS KorisnikTelefon,
+    t.Cena,
+    tr.Satnica * t.TrajanjeSati AS ZaradaTrener
+FROM Trener tr
+LEFT JOIN Termin t ON tr.IDTrener = t.TrenerID
+LEFT JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik;
+GO
+
+CREATE VIEW vw_DnevniTermini AS
+SELECT
+    CAST(t.DatumVreme AS DATE) AS Datum,
+    CAST(t.DatumVreme AS TIME) AS Vreme,
+    t.IDTermin,
+    CONCAT(k.Ime, ' ', k.Prezime) AS Korisnik,
+    CONCAT(tr.Ime, ' ', tr.Prezime) AS Trener,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena
+FROM Termin t
+INNER JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik
+INNER JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+-- =============================================
+-- LOGIN PROCEDURE
+-- =============================================
+CREATE PROCEDURE dbo.PostojiKorisnikPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Korisnik
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END
+GO
+
+CREATE PROCEDURE dbo.PostojiTrenerPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Trener
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END
 GO
