@@ -1,0 +1,10 @@
+C:\Users\student\Documents\Visual Studio 2010\Projects\se2cas5grupa2\RESENJE\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\bin\KadrovskiPodaci.dll
+C:\Users\student\Documents\Visual Studio 2010\Projects\se2cas5grupa2\RESENJE\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\bin\KadrovskiPodaci.pdb
+C:\Users\student\Documents\Visual Studio 2010\Projects\se2cas5grupa2\RESENJE\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.dll
+C:\Users\student\Documents\Visual Studio 2010\Projects\se2cas5grupa2\RESENJE\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.pdb
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\bin\KadrovskiPodaci.dll
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\bin\KadrovskiPodaci.pdb
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.csproj.AssemblyReference.cache
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.csproj.CoreCompileInputs.cache
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.dll
+D:\Ljubica\NASTAVA\ddd LETNJI SEMESTAR osnovne VEB PROGRAMIRANJE\sk 2024 25\seminarski rad\VP2025sem\3_SlojServisa\WebServis\KadrovskiPodaci\KadrovskiPodaci\obj\Debug\KadrovskiPodaci.pdb
