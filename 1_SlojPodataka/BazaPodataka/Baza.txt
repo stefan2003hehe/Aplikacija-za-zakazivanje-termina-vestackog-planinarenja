@@ -1,0 +1,752 @@
+
+CREATE DATABASE vestackoplaninarenje;
+GO
+
+USE vestackoplaninarenje;
+GO
+
+-- =============================================
+-- Tabela Admin
+-- =============================================
+
+CREATE TABLE Admin (
+    IDAdmin INT PRIMARY KEY IDENTITY(1,1),
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL
+);
+GO
+
+-- Test admin nalozi
+INSERT INTO Admin (KorisnickoIme, Sifra)
+VALUES 
+('admin', 'admin123'),
+('administrator', 'admin2024');
+GO
+
+-- =============================================
+-- Procedura: Provera prijave admina
+-- =============================================
+
+CREATE PROCEDURE dbo.PostojiAdminPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Admin
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END;
+GO
+
+
+-- =============================================
+-- KREIRANJE TABELA
+-- =============================================
+
+-- Tabela Korisnik
+CREATE TABLE Korisnik (
+    IDKorisnik INT PRIMARY KEY IDENTITY(1,1),
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M', 'Ž')),
+    BrojTelefona NVARCHAR(20) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL,
+    DatumRodjenja DATE NOT NULL
+);
+
+-- Tabela Trener
+CREATE TABLE Trener (
+    IDTrener INT PRIMARY KEY IDENTITY(1,1),
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Pol NVARCHAR(1) NOT NULL CHECK (Pol IN ('M', 'Ž')),
+    BrojTelefona NVARCHAR(20) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    KorisnickoIme NVARCHAR(50) NOT NULL UNIQUE,
+    Sifra NVARCHAR(100) NOT NULL,
+    Sertifikati NVARCHAR(255),
+    Satnica DECIMAL(10, 2) NOT NULL
+);
+
+-- Tabela Termin
+CREATE TABLE Termin (
+    IDTermin INT PRIMARY KEY IDENTITY(1,1),
+    KorisnikID INT NOT NULL,
+    TrenerID INT NOT NULL,
+    DatumVreme DATETIME NOT NULL,
+    TrajanjeSati DECIMAL(3, 1) NOT NULL,
+    Ruta NVARCHAR(100) NOT NULL CHECK (Ruta IN ('Jug', 'Sever')),
+    Tezina NVARCHAR(10),
+    Cena DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (KorisnikID) REFERENCES Korisnik(IDKorisnik) ON DELETE CASCADE,
+    FOREIGN KEY (TrenerID) REFERENCES Trener(IDTrener) ON DELETE CASCADE
+);
+GO
+
+-- =============================================
+-- KREIRANJE POGLEDA (VIEWS)
+-- =============================================
+
+-- Pogled: Pregled Korisnika
+CREATE VIEW PregledKorisnika AS
+SELECT
+    IDKorisnik,
+    Ime,
+    Prezime,
+    Pol,
+    BrojTelefona,
+    Email,
+    KorisnickoIme,
+    DatumRodjenja,
+    YEAR(GETDATE()) - YEAR(DatumRodjenja) AS Starost
+FROM Korisnik;
+GO
+
+-- Pogled: Pregled Trenera
+CREATE VIEW PregledTrenera AS
+SELECT
+    IDTrener,
+    Ime,
+    Prezime,
+    Pol,
+    BrojTelefona,
+    Email,
+    KorisnickoIme,
+    Sertifikati,
+    Satnica
+FROM Trener;
+GO
+
+-- Pogled: Kompletan pregled termina sa korisnicima i trenerima
+CREATE VIEW vw_TerminiDetalji AS
+SELECT
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena,
+    k.IDKorisnik,
+    k.Ime AS KorisnikIme,
+    k.Prezime AS KorisnikPrezime,
+    k.BrojTelefona AS KorisnikTelefon,
+    k.Email AS KorisnikEmail,
+    k.KorisnickoIme AS KorisnikKorisnickoIme,
+    tr.IDTrener,
+    tr.Ime AS TrenerIme,
+    tr.Prezime AS TrenerPrezime,
+    tr.BrojTelefona AS TrenerTelefon,
+    tr.Email AS TrenerEmail,
+    tr.KorisnickoIme AS TrenerKorisnickoIme,
+    tr.Satnica AS TrenerSatnica
+FROM Termin t
+INNER JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik
+INNER JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+-- Pogled: Termini po korisniku (istorija)
+CREATE VIEW vw_KorisnikTermini AS
+SELECT
+    k.IDKorisnik,
+    k.Ime,
+    k.Prezime,
+    k.Email,
+    k.KorisnickoIme,
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena,
+    CONCAT(tr.Ime, ' ', tr.Prezime) AS Trener
+FROM Korisnik k
+LEFT JOIN Termin t ON k.IDKorisnik = t.KorisnikID
+LEFT JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+-- Pogled: Termini po treneru (raspored)
+CREATE VIEW vw_TrenerRaspored AS
+SELECT
+    tr.IDTrener,
+    tr.Ime AS TrenerIme,
+    tr.Prezime AS TrenerPrezime,
+    t.IDTermin,
+    t.DatumVreme,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    CONCAT(k.Ime, ' ', k.Prezime) AS Korisnik,
+    k.BrojTelefona AS KorisnikTelefon,
+    t.Cena,
+    tr.Satnica * t.TrajanjeSati AS ZaradaTrener
+FROM Trener tr
+LEFT JOIN Termin t ON tr.IDTrener = t.TrenerID
+LEFT JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik;
+GO
+
+-- Pogled: Dnevni pregled termina
+CREATE VIEW vw_DnevniTermini AS
+SELECT
+    CAST(t.DatumVreme AS DATE) AS Datum,
+    CAST(t.DatumVreme AS TIME) AS Vreme,
+    t.IDTermin,
+    CONCAT(k.Ime, ' ', k.Prezime) AS Korisnik,
+    CONCAT(tr.Ime, ' ', tr.Prezime) AS Trener,
+    t.TrajanjeSati,
+    t.Ruta,
+    t.Tezina,
+    t.Cena
+FROM Termin t
+INNER JOIN Korisnik k ON t.KorisnikID = k.IDKorisnik
+INNER JOIN Trener tr ON t.TrenerID = tr.IDTrener;
+GO
+
+-- =============================================
+-- KREIRANJE PROCEDURA
+-- =============================================
+
+-- DodajKorisnika
+CREATE PROCEDURE DodajKorisnika
+    @Ime NVARCHAR(50),
+    @Prezime NVARCHAR(50),
+    @Pol NVARCHAR(1),
+    @BrojTelefona NVARCHAR(20),
+    @Email NVARCHAR(100),
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100),
+    @DatumRodjenja DATE
+AS
+BEGIN
+    INSERT INTO Korisnik (Ime, Prezime, Pol, BrojTelefona, Email, KorisnickoIme, Sifra, DatumRodjenja)
+    VALUES (@Ime, @Prezime, @Pol, @BrojTelefona, @Email, @KorisnickoIme, @Sifra, @DatumRodjenja);
+    
+    SELECT SCOPE_IDENTITY() AS IDKorisnik;
+    RETURN 0;
+END;
+GO
+
+-- IzmeniKorisnika
+CREATE PROCEDURE IzmeniKorisnika
+    @IDKorisnik INT,
+    @Ime NVARCHAR(50),
+    @Prezime NVARCHAR(50),
+    @Pol NVARCHAR(1),
+    @BrojTelefona NVARCHAR(20),
+    @Email NVARCHAR(100),
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100),
+    @DatumRodjenja DATE
+AS
+BEGIN
+    UPDATE Korisnik
+    SET Ime = @Ime,
+        Prezime = @Prezime,
+        Pol = @Pol,
+        BrojTelefona = @BrojTelefona,
+        Email = @Email,
+        KorisnickoIme = @KorisnickoIme,
+        Sifra = @Sifra,
+        DatumRodjenja = @DatumRodjenja
+    WHERE IDKorisnik = @IDKorisnik;
+    
+    RETURN 0;
+END;
+GO
+
+-- ObrisiKorisnika
+CREATE PROCEDURE ObrisiKorisnika
+    @IDKorisnik INT
+AS
+BEGIN
+    DELETE FROM Korisnik WHERE IDKorisnik = @IDKorisnik;
+    RETURN 0;
+END;
+GO
+
+-- VratiSveKorisnike
+CREATE PROCEDURE VratiSveKorisnike
+AS
+BEGIN
+    SELECT 
+        IDKorisnik,
+        Ime,
+        Prezime,
+        Pol,
+        BrojTelefona,
+        Email,
+        KorisnickoIme,
+        DatumRodjenja,
+        YEAR(GETDATE()) - YEAR(DatumRodjenja) AS Starost
+    FROM Korisnik
+    ORDER BY Prezime, Ime;
+    
+    RETURN 0;
+END;
+GO
+
+-- PostojiKorisnik
+CREATE PROCEDURE PostojiKorisnik
+    @Email NVARCHAR(100)
+AS
+BEGIN
+    SELECT COUNT(*) AS Postoji
+    FROM Korisnik
+    WHERE Email = @Email;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiKorisnikaPoID
+CREATE PROCEDURE VratiKorisnikaPoID
+    @IDKorisnik INT
+AS
+BEGIN
+    SELECT *
+    FROM Korisnik
+    WHERE IDKorisnik = @IDKorisnik;
+    
+    RETURN 0;
+END;
+GO
+
+-- =============================================
+-- PROCEDURE ZA TRENERA
+-- =============================================
+
+-- DodajTrenera
+CREATE PROCEDURE DodajTrenera
+    @Ime NVARCHAR(50),
+    @Prezime NVARCHAR(50),
+    @Pol NVARCHAR(1),
+    @BrojTelefona NVARCHAR(20),
+    @Email NVARCHAR(100),
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100),
+    @Sertifikati NVARCHAR(255),
+    @Satnica DECIMAL(10,2)
+AS
+BEGIN
+    INSERT INTO Trener (Ime, Prezime, Pol, BrojTelefona, Email, KorisnickoIme, Sifra, Sertifikati, Satnica)
+    VALUES (@Ime, @Prezime, @Pol, @BrojTelefona, @Email, @KorisnickoIme, @Sifra, @Sertifikati, @Satnica);
+    
+    SELECT SCOPE_IDENTITY() AS IDTrener;
+    RETURN 0;
+END;
+GO
+
+-- IzmeniTrenera
+CREATE PROCEDURE IzmeniTrenera
+    @IDTrener INT,
+    @Ime NVARCHAR(50),
+    @Prezime NVARCHAR(50),
+    @Pol NVARCHAR(1),
+    @BrojTelefona NVARCHAR(20),
+    @Email NVARCHAR(100),
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100),
+    @Sertifikati NVARCHAR(255),
+    @Satnica DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE Trener
+    SET Ime = @Ime,
+        Prezime = @Prezime,
+        Pol = @Pol,
+        BrojTelefona = @BrojTelefona,
+        Email = @Email,
+        KorisnickoIme = @KorisnickoIme,
+        Sifra = @Sifra,
+        Sertifikati = @Sertifikati,
+        Satnica = @Satnica
+    WHERE IDTrener = @IDTrener;
+    
+    RETURN 0;
+END;
+GO
+
+-- ObrisiTrenera
+CREATE PROCEDURE ObrisiTrenera
+    @IDTrener INT
+AS
+BEGIN
+    DELETE FROM Trener WHERE IDTrener = @IDTrener;
+    RETURN 0;
+END;
+GO
+
+-- VratiSveTrenere
+CREATE PROCEDURE VratiSveTrenere
+AS
+BEGIN
+    SELECT *
+    FROM Trener
+    ORDER BY Prezime, Ime;
+    
+    RETURN 0;
+END;
+GO
+
+-- PostojiTrener
+CREATE PROCEDURE PostojiTrener
+    @Email NVARCHAR(100)
+AS
+BEGIN
+    SELECT COUNT(*) AS Postoji
+    FROM Trener
+    WHERE Email = @Email;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiTreneraPoID
+CREATE PROCEDURE VratiTreneraPoID
+    @IDTrener INT
+AS
+BEGIN
+    SELECT *
+    FROM Trener
+    WHERE IDTrener = @IDTrener;
+    
+    RETURN 0;
+END;
+GO
+
+-- =============================================
+-- PROCEDURE ZA TERMIN
+-- =============================================
+
+-- DodajTermin
+CREATE PROCEDURE DodajTermin
+    @KorisnikID INT,
+    @TrenerID INT,
+    @DatumVreme DATETIME,
+    @TrajanjeSati DECIMAL(3,1),
+    @Ruta NVARCHAR(100),
+    @Tezina NVARCHAR(10),
+    @Cena DECIMAL(10,2)
+AS
+BEGIN
+    INSERT INTO Termin (KorisnikID, TrenerID, DatumVreme, TrajanjeSati, Ruta, Tezina, Cena)
+    VALUES (@KorisnikID, @TrenerID, @DatumVreme, @TrajanjeSati, @Ruta, @Tezina, @Cena);
+    
+    SELECT SCOPE_IDENTITY() AS IDTermin;
+    RETURN 0;
+END;
+GO
+
+-- IzmeniTermin
+CREATE PROCEDURE IzmeniTermin
+    @IDTermin INT,
+    @KorisnikID INT,
+    @TrenerID INT,
+    @DatumVreme DATETIME,
+    @TrajanjeSati DECIMAL(3,1),
+    @Ruta NVARCHAR(100),
+    @Tezina NVARCHAR(10),
+    @Cena DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE Termin
+    SET KorisnikID = @KorisnikID,
+        TrenerID = @TrenerID,
+        DatumVreme = @DatumVreme,
+        TrajanjeSati = @TrajanjeSati,
+        Ruta = @Ruta,
+        Tezina = @Tezina,
+        Cena = @Cena
+    WHERE IDTermin = @IDTermin;
+    
+    RETURN 0;
+END;
+GO
+
+-- ObrisiTermin
+CREATE PROCEDURE ObrisiTermin
+    @IDTermin INT
+AS
+BEGIN
+    DELETE FROM Termin WHERE IDTermin = @IDTermin;
+    RETURN 0;
+END;
+GO
+
+-- VratiSveTermine
+CREATE PROCEDURE VratiSveTermine
+AS
+BEGIN
+    SELECT *
+    FROM vw_TerminiDetalji
+    ORDER BY DatumVreme DESC;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiTermineZaKorisnika
+CREATE PROCEDURE VratiTermineZaKorisnika
+    @IDKorisnik INT
+AS
+BEGIN
+    SELECT *
+    FROM vw_KorisnikTermini
+    WHERE IDKorisnik = @IDKorisnik
+    ORDER BY DatumVreme DESC;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiTermineZaTrenera
+CREATE PROCEDURE VratiTermineZaTrenera
+    @IDTrener INT
+AS
+BEGIN
+    SELECT *
+    FROM vw_TrenerRaspored
+    WHERE IDTrener = @IDTrener
+    ORDER BY DatumVreme DESC;
+    
+    RETURN 0;
+END;
+GO
+
+-- TrenerJeZauzet
+CREATE PROCEDURE TrenerJeZauzet
+    @TrenerID INT,
+    @DatumVreme DATETIME,
+    @TrajanjeSati DECIMAL(3,1)
+AS
+BEGIN
+    DECLARE @kraj_vremena DATETIME;
+    SET @kraj_vremena = DATEADD(MINUTE, @TrajanjeSati * 60, @DatumVreme);
+    
+    SELECT COUNT(*) AS Zauzet
+    FROM Termin
+    WHERE TrenerID = @TrenerID
+      AND (
+          (@DatumVreme >= DatumVreme AND @DatumVreme < DATEADD(MINUTE, TrajanjeSati * 60, DatumVreme))
+          OR
+          (@kraj_vremena > DatumVreme AND @kraj_vremena <= DATEADD(MINUTE, TrajanjeSati * 60, DatumVreme))
+          OR
+          (@DatumVreme <= DatumVreme AND @kraj_vremena >= DATEADD(MINUTE, TrajanjeSati * 60, DatumVreme))
+      );
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiTermineZaDatum
+CREATE PROCEDURE VratiTermineZaDatum
+    @Datum DATE
+AS
+BEGIN
+    SELECT *
+    FROM vw_DnevniTermini
+    WHERE Datum = @Datum
+    ORDER BY Vreme;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiSlobodneTrenere
+CREATE PROCEDURE VratiSlobodneTrenere
+    @DatumVreme DATETIME,
+    @TrajanjeSati DECIMAL(3,1)
+AS
+BEGIN
+    DECLARE @kraj_vremena DATETIME;
+    SET @kraj_vremena = DATEADD(MINUTE, @TrajanjeSati * 60, @DatumVreme);
+    
+    SELECT t.*
+    FROM Trener t
+    WHERE t.IDTrener NOT IN (
+        SELECT ter.TrenerID
+        FROM Termin ter
+        WHERE (
+            (@DatumVreme >= ter.DatumVreme AND @DatumVreme < DATEADD(MINUTE, ter.TrajanjeSati * 60, ter.DatumVreme))
+            OR
+            (@kraj_vremena > ter.DatumVreme AND @kraj_vremena <= DATEADD(MINUTE, ter.TrajanjeSati * 60, ter.DatumVreme))
+            OR
+            (@DatumVreme <= ter.DatumVreme AND @kraj_vremena >= DATEADD(MINUTE, ter.TrajanjeSati * 60, ter.DatumVreme))
+        )
+    );
+    
+    RETURN 0;
+END;
+GO
+
+-- IzracunajUkupnuZaraduTrenera
+CREATE PROCEDURE IzracunajUkupnuZaraduTrenera
+    @IDTrener INT,
+    @DatumOd DATE,
+    @DatumDo DATE
+AS
+BEGIN
+    SELECT 
+        t.IDTrener,
+        CONCAT(t.Ime, ' ', t.Prezime) AS Trener,
+        COUNT(ter.IDTermin) AS BrojTermina,
+        SUM(ter.TrajanjeSati) AS UkupnoSati,
+        t.Satnica,
+        SUM(t.Satnica * ter.TrajanjeSati) AS UkupnaZarada
+    FROM Trener t
+    LEFT JOIN Termin ter ON t.IDTrener = ter.TrenerID
+        AND CAST(ter.DatumVreme AS DATE) BETWEEN @DatumOd AND @DatumDo
+    WHERE t.IDTrener = @IDTrener
+    GROUP BY t.IDTrener, t.Ime, t.Prezime, t.Satnica;
+    
+    RETURN 0;
+END;
+GO
+
+-- VratiStatistikuKorisnika
+CREATE PROCEDURE VratiStatistikuKorisnika
+    @IDKorisnik INT
+AS
+BEGIN
+    SELECT 
+        k.IDKorisnik,
+        CONCAT(k.Ime, ' ', k.Prezime) AS Korisnik,
+        COUNT(t.IDTermin) AS BrojTermina,
+        SUM(t.TrajanjeSati) AS UkupnoSati,
+        SUM(t.Cena) AS UkupnoPotroseno,
+        MIN(t.DatumVreme) AS PrviTermin,
+        MAX(t.DatumVreme) AS PoslednjiTermin
+    FROM Korisnik k
+    LEFT JOIN Termin t ON k.IDKorisnik = t.KorisnikID
+    WHERE k.IDKorisnik = @IDKorisnik
+    GROUP BY k.IDKorisnik, k.Ime, k.Prezime;
+    
+    RETURN 0;
+END;
+GO
+
+CREATE PROCEDURE dbo.PostojiKorisnikPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Korisnik
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END
+GO
+
+CREATE PROCEDURE dbo.PostojiTrenerPrijava
+    @KorisnickoIme NVARCHAR(50),
+    @Sifra NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(*) AS Postoji
+    FROM dbo.Trener
+    WHERE KorisnickoIme = @KorisnickoIme AND Sifra = @Sifra;
+END
+GO
+
+CREATE PROCEDURE VratiKorisnikaPoKorisnickomImenu
+    @KorisnickoIme NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Korisnik
+    WHERE KorisnickoIme = @KorisnickoIme;
+END
+GO
+
+CREATE PROCEDURE VratiTrenerePoImenu
+    @Ime NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Trener
+    WHERE Ime LIKE '%' + @Ime + '%'
+    ORDER BY Ime;
+END
+GO
+
+
+CREATE PROCEDURE VratiTreneraPoKorisnickomImenu
+    @KorisnickoIme NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT IDTrener,
+           Ime,
+           Prezime,
+           Pol,
+           BrojTelefona,
+           Email,
+           Sertifikati,
+           Satnica,
+           KorisnickoIme
+    FROM Trener
+    WHERE KorisnickoIme = @KorisnickoIme
+END
+
+
+
+CREATE PROCEDURE VratiTerminePoRuti
+    @Ruta NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM Termin
+    WHERE Ruta LIKE '%' + @Ruta + '%'
+    ORDER BY DatumVreme
+END
+
+public DataTable DajKorisnikePoImenu(string ime)
+{
+    string upit = $@"EXEC VratiKorisnikePoImenu @Ime = '{ime}'";
+    DataSet ds = DajPodatke(upit);
+    return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+}
+
+CREATE PROCEDURE VratiKorisnikePoPolu
+    @Pol NVARCHAR(10)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM Korisnik
+    WHERE Pol = @Pol;
+END;
+GO
+
+
+-- =============================================
+-- TEST PODACI
+-- =============================================
+
+-- Dodavanje test korisnika
+INSERT INTO Korisnik (Ime, Prezime, Pol, BrojTelefona, Email, KorisnickoIme, Sifra, DatumRodjenja) VALUES
+('Marko', 'Marković', 'M', '0641234567', 'marko@email.com', 'marko95', 'marko123', '1995-05-15'),
+('Ana', 'Anić', 'Ž', '0642345678', 'ana@email.com', 'ana98', 'ana123', '1998-08-22'),
+('Petar', 'Petrović', 'M', '0643456789', 'petar@email.com', 'petar92', 'petar123', '1992-03-10');
+
+-- Dodavanje test trenera
+INSERT INTO Trener (Ime, Prezime, Pol, BrojTelefona, Email, KorisnickoIme, Sifra, Sertifikati, Satnica) VALUES
+('Jovan', 'Jovanović', 'M', '0651234567', 'jovan.trener@email.com', 'jovanT', 'trener123', 'UIAA Level 3, Sport Climbing', 2500.00),
+('Milica', 'Milić', 'Ž', '0652345678', 'milica.trener@email.com', 'milicaT', 'trener321', 'IFSC Certified, Lead Climbing', 3000.00);
+
+-- Dodavanje test termina (samo rute 'Jug' i 'Sever')
+INSERT INTO Termin (KorisnikID, TrenerID, DatumVreme, TrajanjeSati, Ruta, Tezina, Cena) VALUES
+(1, 1, '2024-12-15 10:00:00', 2.0, 'Sever', '6b', 5000.00),
+(2, 2, '2024-12-16 14:00:00', 1.5, 'Jug', '7a', 4500.00),
+(3, 1, '2024-12-17 09:00:00', 1.0, 'Jug', '5c', 2500.00);
+GO

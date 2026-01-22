@@ -1,0 +1,9 @@
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\bin\Debug\KlasePodataka.dll
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\bin\Debug\KlasePodataka.pdb
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\bin\Debug\DBUtils.dll
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\bin\Debug\DBUtils.pdb
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\obj\Debug\KlasePodataka.csproj.AssemblyReference.cache
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\obj\Debug\KlasePodataka.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\obj\Debug\KlasePod.C2AE2122.Up2Date
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\obj\Debug\KlasePodataka.dll
+C:\Users\PC\Desktop\VP2025sem\1_SlojPodataka\KlasePodataka\KlasePodataka\KlasePodataka\obj\Debug\KlasePodataka.pdb

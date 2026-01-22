@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="yes"?>
+<SpisakRuta>
+	<Ruta>
+		<Sifra>1</Sifra>
+		<Naziv>Sever</Naziv>
+	</Ruta>
+	<Ruta>
+		<Sifra>2</Sifra>
+		<Naziv>Jug</Naziv>
+	</Ruta>
+</SpisakRuta>
