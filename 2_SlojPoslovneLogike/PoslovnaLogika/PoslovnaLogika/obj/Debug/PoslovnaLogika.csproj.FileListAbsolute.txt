@@ -1,0 +1,14 @@
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\PoslovnaLogika.dll.config
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\PoslovnaLogika.dll
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\PoslovnaLogika.pdb
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\DBUtils.dll
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\KlaseMapiranja.dll
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\KlasePodataka.dll
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\DBUtils.pdb
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\KlaseMapiranja.pdb
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\bin\Debug\KlasePodataka.pdb
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\obj\Debug\PoslovnaLogika.csproj.AssemblyReference.cache
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\obj\Debug\PoslovnaLogika.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\obj\Debug\Poslovna.5AADE7AF.Up2Date
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\obj\Debug\PoslovnaLogika.dll
+C:\Users\PC\Desktop\VP2025sem\2_SlojPoslovneLogike\PoslovnaLogika\PoslovnaLogika\obj\Debug\PoslovnaLogika.pdb
