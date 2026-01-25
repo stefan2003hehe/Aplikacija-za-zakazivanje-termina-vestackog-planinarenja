@@ -76,7 +76,7 @@ U fajlu `Web.config` prilagodite connection string vašoj lokalnoj instanci SQL 
 
 ---
 
-## Testni nalozi
+## Test nalozi
 
 Nakon pokretanja SQL skripte, možete koristiti sledeće naloge za testiranje:
 
