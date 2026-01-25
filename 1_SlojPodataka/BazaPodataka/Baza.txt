@@ -694,7 +694,7 @@ BEGIN
     FROM Trener
     WHERE KorisnickoIme = @KorisnickoIme
 END
-
+GO
 
 
 CREATE PROCEDURE VratiTerminePoRuti
@@ -708,13 +708,8 @@ BEGIN
     WHERE Ruta LIKE '%' + @Ruta + '%'
     ORDER BY DatumVreme
 END
+GO
 
-public DataTable DajKorisnikePoImenu(string ime)
-{
-    string upit = $@"EXEC VratiKorisnikePoImenu @Ime = '{ime}'";
-    DataSet ds = DajPodatke(upit);
-    return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
-}
 
 CREATE PROCEDURE VratiKorisnikePoPolu
     @Pol NVARCHAR(10)
