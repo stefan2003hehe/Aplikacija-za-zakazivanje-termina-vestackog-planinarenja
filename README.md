@@ -103,7 +103,7 @@ Pravila sistema su eksternalizovana u `PoslovnaLogika.xml` radi lakše izmene be
 | :---: | :---: | :---: |
 | ![Početna](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image8.png) | ![Prijava](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/Picture4.png) | ![Zakazivanje](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/Picture5.png) |
 
-| Admin panel | Trener raspored | Štampan |
+| Admin panel | Trener raspored | Štampa |
 | :---: | :---: | :---: |
 | ![Admin](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/admin-panel.png) | ![Trener](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/trener-raspored.png) | ![Štampa](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/stampa.png) |
 
