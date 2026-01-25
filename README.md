@@ -68,11 +68,11 @@ U fajlu `Web.config` prilagodite connection string vašoj lokalnoj instanci SQL 
 
 | Use Case Dijagram | Dijagram Klasa |
 | :---: | :---: |
-| ![Use Case](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image27.jpg) | ![Klasa](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image28.jpg) |
+| ![Use Case](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image27.JPG) | ![Klasa](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image28.JPG) |
 
 | ER Dijagram Baze | Dijagram Sekvenci |
 | :---: | :---: |
-| ![ER](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image30.png) | ![Sekvenca](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image29.png) |
+| ![ER](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image30.png) | ![Sekvenca](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image29.png) |
 
 ---
 
