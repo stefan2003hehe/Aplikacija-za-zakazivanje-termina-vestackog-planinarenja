@@ -101,11 +101,11 @@ Pravila sistema su eksternalizovana u `PoslovnaLogika.xml` radi lakše izmene be
 
 | Početna stranica | Prijava korisnika | Zakazivanje termina |
 | :---: | :---: | :---: |
-| ![Početna](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image8.png) | ![Prijava](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image10.png) | ![Zakazivanje](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image12.png) |
+| ![Početna](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/image8.png) | ![Prijava](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/Picture4.png) | ![Zakazivanje](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/Picture5.png) |
 
-| Admin panel | Trener raspored | Štampanje termina |
+| Admin panel | Trener raspored | Štampan |
 | :---: | :---: | :---: |
-| ![Admin](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image22.png) | ![Trener](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image19.png) | ![Štampa](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/main/media/image13.png) |
+| ![Admin](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/admin-panel.png) | ![Trener](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/trener-raspored.png) | ![Štampa](https://raw.githubusercontent.com/stefan2003hehe/Aplikacija-za-zakazivanje-termina-vestackog-planinarenja/refs/heads/main/media/stampa.png) |
 
 ---
 
